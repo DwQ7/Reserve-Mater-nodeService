@@ -4,8 +4,7 @@
  */
 const ClassRoomSQL = {
     insert:'INSERT INTO classroom(classroom_location,classroom_detail,classroom_pic) VALUES(?,?,?)',
-    getClassRoomById:'SELECT * FROM classroom WHERE classroom_id = ? '
+    getClassRoomById:'SELECT * FROM classroom WHERE classroom_id = ? ',
+    queryAll:'SELECT * FROM classroom',
 };
-
-
 module.exports = ClassRoomSQL;

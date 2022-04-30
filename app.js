@@ -51,6 +51,9 @@ app.all("*",function(req,res,next){
 const usersRouter = require("./routes/users");
 const loginRouter = require("./routes/login");
 const registerRouter = require('./routes/register');
+const statusRouter = require('./routes/status')
+const reservationRouter = require('./routes/reservation')
+const classroomRouter = require('./routes/classroom')
 //引用路由
 // const loginRouter = require('./routes/login');
 // const registerRouter = require('./routes/register');
@@ -82,9 +85,12 @@ app.use(cookieParser());
 
 
 //配置路由
-app.use('/users',usersRouter)
+app.use('/user',usersRouter)
 app.use('/login',loginRouter)
 app.use('/register',registerRouter);
+app.use('/status',statusRouter)
+app.use('/reservation',reservationRouter)
+app.use('/classroom',classroomRouter)
 // app.use('/download',downloadRouter);
 
 

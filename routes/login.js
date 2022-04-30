@@ -27,9 +27,11 @@ router.post('/', function(req, res, next) {
                 result = JSON.parse(JSON.stringify(result))
                 if(result[0].password === body.password){
                     let username = result[0].user_name
+                    let userId = result[0].user_id
                     response.status = 1
                     response.message = username
                     response.sno = body.userNo
+                    response.userId = userId
                     // req.session.username = username
                     res.send(response)
                 }else{
