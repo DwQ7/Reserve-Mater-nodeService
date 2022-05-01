@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const dbConfig = require('../db/dbconfig');
-const reservationSQL = require('../db/reservationSQL')
-
-const mysql = require('mysql');
-const pool = mysql.createPool(dbConfig.mysql);
 
 const classroom = require('../common/classroom')
+const status = require('../common/status')
+const reservation = require("../common/reservation");
 
 /**
  * 根据学号/工号获取预订信息
@@ -15,15 +12,9 @@ const classroom = require('../common/classroom')
 router.get('/', function(req, res, next) {
     //获取客户端发来的数据
     let userNo = req.query.userNo
-    let response = {}
-    pool.getConnection(function (err, connection) {
-        connection.query(reservationSQL.getReservationByUserNo, userNo, function (err, result) {
-            result.forEach((item,index) =>{
-                response[index] = item
-            })
-            res.send(response)
-        })
-    });
+    reservation.getReservationById(userNo).then((data) =>{
+        res.send(data)
+    })
 })
 /**
  * 预约
@@ -35,21 +26,21 @@ router.get('/', function(req, res, next) {
  */
 router.post('/', function(req, res, next) {
     //获取客户端发来的数据
+
     let body = req.body;
+
     let response = {}
-    classroom.getFreeClassroom(new Date(body.date).getDay() - 1,body.start,body.last).then((date) =>{
-        console.log(date);
-        if(!date.includes(Number(body.classroomId))){
+    classroom.getFreeClassroom(new Date(body.date).getDay() - 1,body.start,body.last).then((data) =>{
+        if(!data.includes(Number(body.classroomId))){
             response.status = 0
             response.message = '该时段不可预约'
             res.send(response)
         }else{
-            pool.getConnection(function (err,connection) {
-                connection.query(reservationSQL.insert,[body.date,body.start,body.last,body.classroomId,body.userId],function (err,result) {
-                    console.log(result);
-                    response.status = 1
-                    response.message = 'success'
-                    res.send(response)
+            reservation.doReservation(body.date, body.start, body.last, body.classroomId, body.userId).then((info) =>{
+                status.getStatusByDateAndId(info.date,info.classroomId).then((oldStatus) =>{
+                    status.updateStatusBy(oldStatus,body.date,body.classroomId,Number(body.start),Number(body.last)).then((info) =>{
+                        res.send('预约成功')
+                    })
                 })
             })
         }

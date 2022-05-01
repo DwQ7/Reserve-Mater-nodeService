@@ -15,7 +15,7 @@ router.get('/byId', function(req, res, next) {
     let classroomId = req.query.classroomId
     let response = {}
     pool.getConnection(function (err, connection) {
-        connection.query(statusSQL.getClassRoomById, classroomId, function (err, result) {
+        connection.query(statusSQL.getStatusById, classroomId, function (err, result) {
             result.forEach((item,index) =>{
                 item.week = week[item.date.getDay() - 1]
                 item.status = item.status.split('')

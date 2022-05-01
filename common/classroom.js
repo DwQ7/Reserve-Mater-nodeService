@@ -45,5 +45,37 @@ function getFreeClassroomDetail(arr){
     return results
 }
 
+/**
+ * 获取所有教室信息
+ * @returns {Promise<unknown>}
+ */
+function getAllClassroom(){
+    return new Promise((resolve,reject) =>{
+        let response = {}
+        pool.getConnection(function (err, connection) {
+            connection.query(classroomSQL.queryAll,function (err, result) {
+                result.forEach((item,index) =>{
+                    response[index] = item
+                })
+                resolve(response)
+            })
+        });
+    })
+}
+
+function getClassroomById(classroomId) {
+    return new Promise((resolve,reject) =>{
+        let response = {}
+        pool.getConnection(function (err, connection) {
+            connection.query(classroomSQL.getClassRoomById, classroomId, function (err, result) {
+                response = result[0]
+                resolve(response)
+            })
+        });
+    })
+}
+
+exports.getClassroomById = getClassroomById
 exports.getFreeClassroom = getFreeClassroom
 exports.getFreeClassroomDetail = getFreeClassroomDetail
+exports.getAllClassroom = getAllClassroom
